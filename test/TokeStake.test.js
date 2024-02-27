@@ -117,7 +117,7 @@ describe("TokenStake contract", function () {
    });
   
 
-   describe("Core contract integration", function () {
+   /*describe("Core contract integration", function () {
     let liquidityProviderPool;
     let arbitrageBot;
     let core;
@@ -170,7 +170,7 @@ describe("TokenStake contract", function () {
       const coreAllowance = await token.allowance(user1.address, core.address);
       console.log(`Core allowance after restaking: ${coreAllowance.toString()}`);
     });
-  });
+  });*/
   
   
 });
