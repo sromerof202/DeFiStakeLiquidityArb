@@ -63,7 +63,8 @@ contract LiquidityProviderPool is ReentrancyGuard, Ownable {
         totalLiquidity += reward; // Update total liquidity
         emit LiquidityAdded(msg.sender, reward);
     }
-
+    //work in progress
+    /*
     function integratedRestake(address user) external nonReentrant {
         require(msg.sender == coreContract, "Only Core contract can call this");
         // Logic for integrated restaking...
@@ -76,7 +77,7 @@ contract LiquidityProviderPool is ReentrancyGuard, Ownable {
 
         emit LiquidityAdded(user, reward);
     }
-
+    */
     // Function to calculate and update rewards (simplified example)
     function updateRewards(address provider, uint256 reward) public onlyOwner {
         rewards[provider] += reward;
