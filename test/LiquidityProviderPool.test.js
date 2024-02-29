@@ -48,7 +48,7 @@ describe("LiquidityProviderPool", function () {
       expect((await liquidityProviderPool.totalLiquidity()).toString()).to.equal('50');
     });
 
-/*describe("Reward and Restake", function () {
+describe("Reward and Restake", function () {
     let tokenStake;
     let core;
     let arbitrageBot;
@@ -62,7 +62,7 @@ describe("LiquidityProviderPool", function () {
 
         // Deploy the MyToken contract
         const MyToken = await ethers.getContractFactory("MyToken");
-        const token = await MyToken.deploy();
+        const token = await MyToken.deploy(1000); // 1000 is the initial supply
         await token.deployed();
         tokenAddress = token.address; // Get the address of the deployed token
 
@@ -71,7 +71,7 @@ describe("LiquidityProviderPool", function () {
         tokenStake = await TokenStake.deploy(tokenAddress);
         await tokenStake.deployed();
 
-        // Deploy the ArbitrageBot contract
+        /*// Deploy the ArbitrageBot contract
         const ArbitrageBot = await ethers.getContractFactory("ArbitrageBot");
         arbitrageBot = await ArbitrageBot.deploy(initialOwner.address, tokenAddress);
         await arbitrageBot.deployed();
@@ -79,19 +79,33 @@ describe("LiquidityProviderPool", function () {
         // Deploy the Core contract
         const Core = await ethers.getContractFactory("Core");
         core = await Core.deploy(tokenAddress, tokenStake.address, liquidityProviderPool.address, arbitrageBot.address);
-        await core.deployed();
+        await core.deployed();*/
     });
         
-        it("Should restake rewards", async function () {
-          await token.transfer(liquidityProviderPool.address, 100); // Increase the transferred amount
-          await liquidityProviderPool.updateRewards(addr1.address, 100); // Increase the rewards
-          await liquidityProviderPool.connect(addr1).restake();
-          expect((await liquidityProviderPool.providerBalances(addr1.address)).toString()).to.equal('150');
-          expect((await liquidityProviderPool.totalLiquidity()).toString()).to.equal('150');
-          expect((await liquidityProviderPool.rewards(addr1.address)).toString()).to.equal('0');
-        });
-        
-      
+    it("Should restake rewards", async function () {
+      await token.transfer(liquidityProviderPool.address, 100); // Increase the transferred amount
+      await token.connect(addr1).approve(liquidityProviderPool.address, 100); // Approve the contract to spend tokens
+      await liquidityProviderPool.connect(addr1).addLiquidity(100); // Add liquidity as addr1
+      await liquidityProviderPool.connect(initialOwner).updateRewards(addr1.address, 100); // Increase the rewards
+      await liquidityProviderPool.connect(addr1).restake();
+      expect((await liquidityProviderPool.providerBalances(addr1.address)).toString()).to.equal('200');
+      expect((await liquidityProviderPool.totalLiquidity()).toString()).to.equal('200');
+      expect((await liquidityProviderPool.rewards(addr1.address)).toString()).to.equal('0');
+    });
+    
+    it("Should update rewards correctly", async function () {
+      await liquidityProviderPool.connect(initialOwner).updateRewards(addr1.address, 100);
+      expect((await liquidityProviderPool.rewards(addr1.address)).toString()).to.equal('100');
+    });
+    
+    it("Should restake rewards correctly", async function () {
+      await token.connect(addr1).approve(liquidityProviderPool.address, 100); // Approve the contract to spend tokens
+      await liquidityProviderPool.connect(addr1).addLiquidity(100); // Add liquidity as addr1
+      await liquidityProviderPool.connect(initialOwner).updateRewards(addr1.address, 100);
+      await liquidityProviderPool.connect(addr1).restake();
+      expect((await liquidityProviderPool.providerBalances(addr1.address)).toString()).to.equal('200');
+    });
+        /*
         it("Should allow integrated restake", async function () {
             // Transfer tokens to the liquidityProviderPool
             await token.transfer(liquidityProviderPool.address, 100); // Increase the transferred amount
@@ -100,9 +114,9 @@ describe("LiquidityProviderPool", function () {
             expect((await liquidityProviderPool.providerBalances(addr1.address)).toString()).to.equal('150');
             expect((await liquidityProviderPool.totalLiquidity()).toString()).to.equal('150');
             expect((await liquidityProviderPool.rewards(addr1.address)).toString()).to.equal('0');
-          });
+          });*/
     });
-     */ 
+     
       describe("Interest and Balance", function () {
         it("Should calculate interest", async function () {
             // Transfer 1000 tokens to addr1
