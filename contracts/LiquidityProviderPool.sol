@@ -22,13 +22,13 @@ contract LiquidityProviderPool is ReentrancyGuard, Ownable {
     constructor(address _liquidityTokenAddress, address initialOwner) Ownable(initialOwner) {
         liquidityToken = IERC20(_liquidityTokenAddress);
     }
-
+    
     // Setter method for the coreContract address
     function setCoreContract(address _coreContract) external onlyOwner {
         require(_coreContract != address(0), "Invalid address");
         coreContract = _coreContract;
     }
-
+    
     function addLiquidity(uint256 amount) external nonReentrant {
         providerBalances[msg.sender] += amount;
         providerTimestamps[msg.sender] = block.timestamp; // Update the timestamp for the provider
@@ -63,7 +63,8 @@ contract LiquidityProviderPool is ReentrancyGuard, Ownable {
         totalLiquidity += reward; // Update total liquidity
         emit LiquidityAdded(msg.sender, reward);
     }
-
+    //work in progress
+    /*
     function integratedRestake(address user) external nonReentrant {
         require(msg.sender == coreContract, "Only Core contract can call this");
         // Logic for integrated restaking...
@@ -76,7 +77,7 @@ contract LiquidityProviderPool is ReentrancyGuard, Ownable {
 
         emit LiquidityAdded(user, reward);
     }
-
+    */
     // Function to calculate and update rewards (simplified example)
     function updateRewards(address provider, uint256 reward) public onlyOwner {
         rewards[provider] += reward;

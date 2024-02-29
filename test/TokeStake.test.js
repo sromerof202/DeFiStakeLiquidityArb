@@ -114,62 +114,63 @@ describe("TokenStake contract", function () {
   
       expect(finalStake.amount.gt(initialStake.amount)).to.be.true; // Ensure staked amount increased
     });
-  });
+   });
   
-/*
-  describe("Core contract integration", function () {
-    let liquidityProviderPool;
-    before(async function () {
-        // Deploy LiquidityProviderPool contract
-        const LiquidityProviderPoolFactory = await ethers.getContractFactory("LiquidityProviderPool");
-        liquidityProviderPool = await LiquidityProviderPoolFactory.deploy(token.address, owner.address);
-        await liquidityProviderPool.deployed();
-    });
-    
-    let arbitrageBot;
-    before(async function () {
-        // Deploy ArbitrageBot contract
-        const ArbitrageBotFactory = await ethers.getContractFactory("ArbitrageBot");
-        arbitrageBot = await ArbitrageBotFactory.deploy(owner.address, token.address);
-        await arbitrageBot.deployed();
-    });
 
+   /*describe("Core contract integration", function () {
+    let liquidityProviderPool;
+    let arbitrageBot;
+    let core;
+  
+    before(async function () {
+      // Deploy additional required contracts
+      const LiquidityProviderPoolFactory = await ethers.getContractFactory("LiquidityProviderPool");
+      liquidityProviderPool = await LiquidityProviderPoolFactory.deploy(token.address, owner.address);
+      await liquidityProviderPool.deployed();
+  
+      const ArbitrageBotFactory = await ethers.getContractFactory("ArbitrageBot");
+      arbitrageBot = await ArbitrageBotFactory.deploy(owner.address, token.address);
+      await arbitrageBot.deployed();
+  
+      // Deploy Core contract
+      const CoreFactory = await ethers.getContractFactory("Core");
+      core = await CoreFactory.deploy(token.address, tokenStake.address, liquidityProviderPool.address, arbitrageBot.address);
+      await core.deployed();
+    });
+  
     it("Allows Core contract to restake for a user through handleRewardsAndRestake", async function () {
-        // User stakes tokens through Core contract
-        const stakeAmount = ethers.utils.parseUnits("100", 18);
-      
-        // Transfer tokens to user1
-        await token.transfer(user1.address, stakeAmount);
-      
-        // Deploy Core
-        const CoreFactory = await ethers.getContractFactory("Core");
-        const core = await CoreFactory.deploy(
-          token.address, 
-          tokenStake.address, 
-          liquidityProviderPool.address, 
-          arbitrageBot.address
-        );
-        await core.deployed();
-      
-        // Approve the Core contract to spend user1's tokens
-        await token.connect(user1).approve(core.address, ethers.constants.MaxUint256);
-        await core.connect(user1).stakeTokens(stakeAmount);
-    
-        // Approve the Core contract to spend user1's tokens again after staking
-        await token.connect(user1).approve(core.address, ethers.constants.MaxUint256);
-      
-        // Simulate time for rewards to accumulate
-        await ethers.provider.send("evm_increaseTime", [3600 * 24 * 30]); // Simulate 30 days
-        await ethers.provider.send("evm_mine");
-    
-        // Core contract handles rewards and restakes for the user
-        const initialStake = await tokenStake.stakes(user1.address);
-    
-        await core.connect(user1).handleRewardsAndRestake(user1.address, stakeAmount);
-        const finalStake = await tokenStake.stakes(user1.address);
-    
-        // Verify if the staked amount has increased, indicating successful restake
-        expect(finalStake.amount).to.be.gt(initialStake.amount);
+      const stakeAmount = ethers.utils.parseUnits("100", 18);
+  
+      // Transfer tokens to user1 and set allowance for Core contract
+      await token.transfer(user1.address, stakeAmount);
+      await token.connect(user1).approve(core.address, ethers.constants.MaxUint256);
+  
+      // Stake tokens through Core contract
+      await core.connect(user1).stakeTokens(stakeAmount);
+  
+      // Simulate time for rewards to accumulate
+      await ethers.provider.send("evm_increaseTime", [3600 * 24 * 30]);
+      await ethers.provider.send("evm_mine");
+  
+      // Initial stake for verification
+      const initialStake = await tokenStake.stakes(user1.address);
+  
+      // Call handleRewardsAndRestake on Core contract
+      await core.handleRewardsAndRestake();
+  
+      // Final stake for comparison
+      const finalStake = await tokenStake.stakes(user1.address);
+  
+      // Verify if the staked amount has increased, indicating successful restake
+      expect(finalStake.amount).to.be.gt(initialStake.amount);
+  
+      // Optionally, verify balances and allowances if necessary
+      const finalUserBalance = await token.balanceOf(user1.address);
+      console.log(`Final user balance: ${finalUserBalance.toString()}`);
+      const coreAllowance = await token.allowance(user1.address, core.address);
+      console.log(`Core allowance after restaking: ${coreAllowance.toString()}`);
     });
   });*/
+  
+  
 });
