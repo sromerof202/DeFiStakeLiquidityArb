@@ -117,6 +117,34 @@ describe("Reward and Restake", function () {
           });*/
     });
      
+    describe("Claim Rewards", function () {
+      it("Should claim rewards correctly", async function () {
+        // Transfer some tokens to the contract and update rewards for addr1
+        await token.transfer(liquidityProviderPool.address, 100);
+        await liquidityProviderPool.connect(owner).updateRewards(addr1.address, 50);
+    
+        // Get initial balance of addr1
+        const initialBalance = await token.balanceOf(addr1.address);
+    
+        // Claim rewards
+        const tx = await liquidityProviderPool.connect(addr1).claimRewards();
+    
+        // Check that rewards for addr1 are reset to 0
+        const finalReward = await liquidityProviderPool.rewards(addr1.address);
+        expect(finalReward.toNumber()).to.equal(0); // Convert BigNumber to number
+    
+        // Check that the correct amount of tokens was transferred
+        const finalBalance = await token.balanceOf(addr1.address);
+        expect(finalBalance.toString()).to.equal(initialBalance.add(50).toString()); // Compare string representations
+    
+        // Check that the RewardPaid event was emitted with the correct parameters
+        const receipt = await tx.wait();
+        const event = receipt.events.find(e => e.eventSignature === 'RewardPaid(address,uint256)');
+        expect(event.args[0]).to.equal(addr1.address);
+        expect(event.args[1].toString()).to.equal('50'); // Compare string representations
+      });
+    });
+
       describe("Interest and Balance", function () {
         it("Should calculate interest", async function () {
             // Transfer 1000 tokens to addr1
