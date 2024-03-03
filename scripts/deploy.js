@@ -9,7 +9,7 @@ async function main() {
   try {
     const MyToken = await hre.ethers.getContractFactory("MyToken");
     const initialSupply = hre.ethers.utils.parseUnits(process.env.INITIAL_SUPPLY, 18);
-    const myToken = await MyToken.deploy(initialSupply, { gasPrice: hre.ethers.utils.parseUnits('10', 'gwei') });
+    const myToken = await MyToken.deploy(initialSupply, { gasPrice: hre.ethers.utils.parseUnits(process.env.GAS_PRICE_GWEI, 'gwei') });
     await myToken.deployed();
     console.log("MyToken deployed to:", myToken.address);
 
