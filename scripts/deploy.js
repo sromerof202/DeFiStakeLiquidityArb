@@ -1,33 +1,48 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
+require('dotenv').config();
 const hre = require("hardhat");
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
+  const [deployer] = await hre.ethers.getSigners();
 
-  const lockedAmount = hre.ethers.parseEther("0.001");
+  console.log("Deploying contracts with the account:", deployer.address);
 
-  const lock = await hre.ethers.deployContract("Lock", [unlockTime], {
-    value: lockedAmount,
-  });
+  try {
+    const MyToken = await hre.ethers.getContractFactory("MyToken");
+    const initialSupply = hre.ethers.utils.parseUnits(process.env.INITIAL_SUPPLY, 18);
+    const myToken = await MyToken.deploy(initialSupply, { gasPrice: hre.ethers.utils.parseUnits('10', 'gwei') });
+    await myToken.deployed();
+    console.log("MyToken deployed to:", myToken.address);
 
-  await lock.waitForDeployment();
+    try {
+      const TokenStake = await hre.ethers.getContractFactory("TokenStake");
+      const tokenStake = await TokenStake.deploy(myToken.address, { gasPrice: hre.ethers.utils.parseUnits('10', 'gwei') });
+      await tokenStake.deployed();
+      console.log("TokenStake deployed to:", tokenStake.address);
 
-  console.log(
-    `Lock with ${ethers.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.target}`
-  );
+      try {
+        const LiquidityProviderPool = await hre.ethers.getContractFactory("LiquidityProviderPool");
+        const gasPriceGwei = process.env.GAS_PRICE_GWEI;
+        const gasPrice = hre.ethers.utils.parseUnits(gasPriceGwei, 'gwei');
+        const liquidityProviderPool = await LiquidityProviderPool.deploy(myToken.address, deployer.address, { gasPrice });
+        await liquidityProviderPool.deployed();
+        console.log("LiquidityProviderPool deployed to:", liquidityProviderPool.address);
+      } catch (error) {
+        console.error("An error occurred while deploying LiquidityProviderPool:", error);
+        process.exit(1);
+      }
+    } catch (error) {
+      console.error("An error occurred while deploying TokenStake:", error);
+      process.exit(1);
+    }
+  } catch (error) {
+    console.error("An error occurred while deploying MyToken:", error);
+    process.exit(1);
+  }
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error("An error occurred during the deployment process:", error);
+    process.exit(1);
+  });
