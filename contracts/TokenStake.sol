@@ -31,13 +31,6 @@ contract TokenStake is ReentrancyGuard, Ownable {
     constructor(address tokenAddress) Ownable(msg.sender) {
         token = IERC20(tokenAddress);
     }
-    /*
-    // Setter method for the coreContract address
-    function setCoreContract(address _coreContract) external onlyOwner {
-        require(_coreContract != address(0), "Invalid address");
-        coreContract = _coreContract;
-    }
-    */
     
     function stake(address staker, uint256 amount) external nonReentrant {
     require(amount > 0, "Amount must be greater than 0");
@@ -105,21 +98,5 @@ contract TokenStake is ReentrancyGuard, Ownable {
 
         emit Staked(msg.sender, reward, block.timestamp); // Log the restaking
     }
-
-   //work in progress
-    /*
-     function integratedRestake(address user) external nonReentrant {
-        require(msg.sender == coreContract, "Only Core contract can call this");
-        updateReward(user); // Ensure the latest rewards are calculated
-        uint256 reward = stakes[user].accruedReward;
-        require(reward > 0, "No rewards to restake");
-
-        stakes[user].amount += reward; // Add rewards to stake
-        totalStaked += reward; // Update total staked amount
-        stakes[user].accruedReward = 0; // Reset accrued rewards
-
-        emit Staked(user, reward, block.timestamp); // Log the restaking
-    }
-    */
 
 }
