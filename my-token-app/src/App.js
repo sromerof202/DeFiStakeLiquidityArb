@@ -3,7 +3,8 @@ import './App.css';
 import React, { useEffect } from 'react';
 import Web3 from 'web3';
 import TokenComponent from './TokenComponent'; // import the TokenComponent
-
+import TokenStakeComponent from './TokenStakeComponent';
+   
 function App() {
   useEffect(() => {
     if (window.ethereum) {
@@ -18,6 +19,9 @@ function App() {
         <img src={logo} className="App-logo" alt="logo" />
         <h1>My App</h1>
         <TokenComponent /> {/* use the TokenComponent */}
+        <div>
+        <TokenStakeComponent />
+        </div>
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
