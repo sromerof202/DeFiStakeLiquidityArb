@@ -307,7 +307,7 @@ const ABI =
         }
      ];
 const TokenStakeComponent = ({ 
-    contractAddress = '0x3e7Dd7921E0Cf11B6Ac35F0e1eD547D149324233', 
+    contractAddress = process.env.REACT_APP_TOKEN_STAKE_ADDRESSES, 
     abi = ABI
         
     }) => {
@@ -665,7 +665,7 @@ const TokenStakeComponent = ({
                       "type": "function"
                     }
                   ];
-                const tokenAddress = '0xE42a7c033F634079C6fF3fA7d27bECfC9070EA9c'; 
+                const tokenAddress = process.env.REACT_APP_MY_TOKEN_ADDRESSES; 
                 const tokenContract = new web3.eth.Contract(tokenAbi, tokenAddress);
                 console.log(tokenContract.methods); // Log the tokenContract instance to see its methods
                 console.log(tokenAbi); // Log the ABI to check if it includes the 'approve' function
