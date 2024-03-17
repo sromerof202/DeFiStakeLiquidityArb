@@ -2,7 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import React, { useEffect } from 'react';
 import Web3 from 'web3';
-import TokenComponent from './TokenComponent'; // import the TokenComponent
+import MyTokenComponent from './MyTokenComponent'; // import the TokenComponent
 import TokenStakeComponent from './TokenStakeComponent';
    
 function App() {
@@ -18,7 +18,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <h1>My App</h1>
-        <TokenComponent /> {/* use the TokenComponent */}
+        <MyTokenComponent /> {/* use the TokenComponent */}
         <div>
         <TokenStakeComponent />
         </div>
